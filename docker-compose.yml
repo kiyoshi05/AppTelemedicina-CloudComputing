@@ -1,0 +1,76 @@
+# SaludYa: 1 gateway (Nginx + front) y 4 microservicios FastAPI con SQLite.
+# Solo el gateway publica un puerto; los microservicios quedan en la red interna.
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: web-saludya
+    ports:
+      - "${FRONT_PORT:-80}:80"
+    depends_on:
+      - pacientes
+      - medicos
+      - citas
+      - recetas
+    networks: [saludya-net]
+    restart: unless-stopped
+
+  pacientes:
+    build: ./backend/pacientes
+    container_name: ms-pacientes
+    environment:
+      ROOT_PATH: /api/pacientes
+      DB_PATH: /data/pacientes.db
+    volumes:
+      - pacientes_data:/data
+    networks: [saludya-net]
+    restart: unless-stopped
+
+  medicos:
+    build: ./backend/medicos
+    container_name: ms-medicos
+    environment:
+      ROOT_PATH: /api/medicos
+      DB_PATH: /data/medicos.db
+    volumes:
+      - medicos_data:/data
+    networks: [saludya-net]
+    restart: unless-stopped
+
+  citas:
+    build: ./backend/citas
+    container_name: ms-citas
+    environment:
+      ROOT_PATH: /api/citas
+      DB_PATH: /data/citas.db
+      PACIENTES_URL: http://pacientes:8001
+      MEDICOS_URL: http://medicos:8002
+      TZ_OFFSET_HOURS: "-5"
+    volumes:
+      - citas_data:/data
+    depends_on:
+      - pacientes
+      - medicos
+    networks: [saludya-net]
+    restart: unless-stopped
+
+  recetas:
+    build: ./backend/recetas
+    container_name: ms-recetas
+    environment:
+      ROOT_PATH: /api/recetas
+      DB_PATH: /data/recetas.db
+      TZ_OFFSET_HOURS: "-5"
+    volumes:
+      - recetas_data:/data
+    networks: [saludya-net]
+    restart: unless-stopped
+
+networks:
+  saludya-net:
+
+volumes:
+  pacientes_data:
+  medicos_data:
+  citas_data:
+  recetas_data:

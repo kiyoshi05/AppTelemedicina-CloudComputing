@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SaludYa — Telemedicina</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <div class="brand"><span class="dot"></span> SaludYa</div>
+    <div class="topbar-actions" id="topbarActions"></div>
+  </header>
+
+  <main>
+
+    <!-- ========== BIENVENIDA ========== -->
+    <section class="view active" id="view-bienvenida">
+      <div class="hero">
+        <h1>Atención médica confiable, sin salir de casa</h1>
+        <p>Agenda citas con especialistas, recibe orientación sobre tus síntomas y consulta tus recetas, todo en un solo lugar.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="go('view-registro-paciente')">Crear mi cuenta</button>
+          <button class="btn btn-secondary" onclick="go('view-login')">Ya tengo cuenta</button>
+        </div>
+      </div>
+      <div class="feature-grid">
+        <div class="feature"><div class="icon">🩺</div><h3>Especialista sugerido</h3><p>Según tus síntomas</p></div>
+        <div class="feature"><div class="icon">📅</div><h3>Agenda flexible</h3><p>Elige día y hora</p></div>
+        <div class="feature"><div class="icon">💬</div><h3>Consulta remota</h3><p>Desde tu celular</p></div>
+        <div class="feature"><div class="icon">💊</div><h3>Recetas digitales</h3><p>Siempre disponibles</p></div>
+      </div>
+    </section>
+
+    <!-- ========== LOGIN (opcional) ========== -->
+    <section class="view" id="view-login">
+      <h1 class="page-title">Iniciar sesión</h1>
+      <p class="page-sub">Ingresa con el correo que usaste al registrarte.</p>
+      <div class="card">
+        <label for="loginEmail">Correo electrónico</label>
+        <input type="email" id="loginEmail" placeholder="tu@correo.com" value="maria.rojas@gmail.com">
+        <label for="loginPass">Contraseña</label>
+        <input type="password" id="loginPass" placeholder="••••••••" value="demo1234">
+        <button class="btn btn-primary btn-block" style="margin-top:18px" onclick="doLogin()">Ingresar</button>
+        <div class="divider-or">o</div>
+        <button class="btn btn-secondary btn-block" onclick="go('view-registro-paciente')">Crear una cuenta nueva</button>
+      </div>
+    </section>
+
+    <!-- ========== REGISTRO DE PACIENTE ========== -->
+    <section class="view" id="view-registro-paciente">
+      <h1 class="page-title">Registro de paciente</h1>
+      <p class="page-sub">Completa tus datos para crear tu historial médico.</p>
+      <div class="card">
+        <label for="pNombre">Nombres y apellidos</label>
+        <input type="text" id="pNombre" placeholder="Ej. María Rojas Delgado">
+        <div class="field-row">
+          <div>
+            <label for="pDoc">N° de documento</label>
+            <input type="text" id="pDoc" placeholder="DNI / CE">
+          </div>
+          <div>
+            <label for="pNac">Fecha de nacimiento</label>
+            <input type="date" id="pNac">
+          </div>
+        </div>
+        <div class="field-row">
+          <div>
+            <label for="pTelefono">Teléfono</label>
+            <input type="tel" id="pTelefono" placeholder="9xx xxx xxx">
+          </div>
+          <div>
+            <label for="pSexo">Sexo</label>
+            <select id="pSexo">
+              <option value="">Selecciona...</option>
+              <option>Femenino</option>
+              <option>Masculino</option>
+              <option>Prefiero no decir</option>
+            </select>
+          </div>
+        </div>
+        <label for="pEmail">Correo electrónico</label>
+        <input type="email" id="pEmail" placeholder="tu@correo.com">
+        <label for="pPass">Contraseña</label>
+        <input type="password" id="pPass" placeholder="Crea una contraseña">
+
+        <hr style="border:none;border-top:1px solid var(--border); margin:18px 0">
+
+        <span class="sim-badge">✨ Sugerencia automática por palabras clave (no es una IA)</span>
+        <label for="pSintomas">Cuéntanos tus síntomas (opcional)</label>
+        <textarea id="pSintomas" placeholder="Ej. Tengo dolor de cabeza fuerte y algo de mareo desde ayer..."></textarea>
+        <button class="btn btn-secondary btn-sm" style="margin-top:10px" onclick="sugerirEnRegistro()">Sugerir especialidad</button>
+        <div id="sugerenciaRegistro" style="margin-top:12px;"></div>
+
+        <button class="btn btn-primary btn-block" style="margin-top:20px" onclick="crearCuenta()">Crear cuenta y continuar</button>
+      </div>
+    </section>
+
+    <!-- ========== APP (post-login) ========== -->
+    <section class="view" id="view-app">
+
+      <!-- Home dentro de la app -->
+      <div id="sub-home">
+        <h1 class="page-title">Hola, <span id="homeNombre">Paciente</span> 👋</h1>
+        <p class="page-sub">¿Qué necesitas hacer hoy?</p>
+        <div class="feature-grid" style="grid-template-columns:repeat(2,1fr)">
+          <div class="feature" style="cursor:pointer" onclick="irAAgendar()">
+            <div class="icon">📅</div><h3>Agendar cita</h3><p>Nueva consulta</p>
+          </div>
+          <div class="feature" style="cursor:pointer" onclick="mostrarSub('citas')">
+            <div class="icon">🗂️</div><h3>Mis citas</h3><p>Ver todas</p>
+          </div>
+          <div class="feature" style="cursor:pointer" onclick="mostrarSub('citas')">
+            <div class="icon">💊</div><h3>Mis recetas</h3><p>Ver detalle</p>
+          </div>
+          <div class="feature" style="cursor:pointer" onclick="doLogout()">
+            <div class="icon">🚪</div><h3>Cerrar sesión</h3><p>Salir</p>
+          </div>
+        </div>
+
+        <h1 class="page-title" style="margin-top:26px">Próxima cita</h1>
+        <div id="proximaCitaBox"></div>
+      </div>
+
+      <!-- Registro de cita -->
+      <div id="sub-cita" style="display:none">
+        <h1 class="page-title">Agendar cita</h1>
+        <div class="steps">
+          <div class="step" data-step="1"><div class="num">1</div><span class="lbl">Especialidad</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-step="2"><div class="num">2</div><span class="lbl">Médico</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-step="3"><div class="num">3</div><span class="lbl">Horario</span></div>
+          <div class="step-line"></div>
+          <div class="step" data-step="4"><div class="num">4</div><span class="lbl">Confirmar</span></div>
+        </div>
+
+        <!-- paso 1 -->
+        <div class="wizard-step" id="wizStep1">
+          <div class="card">
+            <span class="sim-badge">✨ Sugerencia automática por palabras clave</span>
+            <label for="citaSintomas">Describe tus síntomas</label>
+            <textarea id="citaSintomas" placeholder="Ej. Me duele el pecho y me falta un poco el aire al caminar..."></textarea>
+            <button class="btn btn-secondary btn-sm" style="margin-top:10px" onclick="sugerirEnCita()">Sugerir top 3 especialidades</button>
+            <div id="top3Box" class="chip-grid" style="margin-top:14px;"></div>
+            <p class="helper" id="top3Helper" style="display:none">Elige una especialidad sugerida, o ignora los síntomas y selecciona directamente:</p>
+
+            <div class="divider-or">o, si prefieres</div>
+            <label for="selEspecialidadDirecta">Elegir especialidad directamente</label>
+            <select id="selEspecialidadDirecta" onchange="elegirEspecialidadDirecta()">
+              <option value="">Selecciona una especialidad...</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-block" id="btnPaso1" disabled onclick="irPaso(2)">Continuar</button>
+        </div>
+
+        <!-- paso 2 -->
+        <div class="wizard-step" id="wizStep2" style="display:none">
+          <p class="page-sub">Especialidad: <strong id="espElegidaLbl"></strong> · <button class="link-btn" onclick="irPaso(1)">cambiar</button></p>
+          <div id="doctorList"></div>
+          <button class="btn btn-primary btn-block" id="btnPaso2" disabled onclick="irPaso(3)">Continuar</button>
+        </div>
+
+        <!-- paso 3 -->
+        <div class="wizard-step" id="wizStep3" style="display:none">
+          <p class="page-sub">Médico: <strong id="medElegidoLbl"></strong> · <button class="link-btn" onclick="irPaso(2)">cambiar</button></p>
+          <label>Selecciona el día</label>
+          <div class="slot-grid" id="dayTabs"></div>
+          <label style="margin-top:16px">Selecciona la hora</label>
+          <div class="slot-grid" id="hourChips"></div>
+          <button class="btn btn-primary btn-block" style="margin-top:20px" id="btnPaso3" disabled onclick="irPaso(4)">Continuar</button>
+        </div>
+
+        <!-- paso 4 -->
+        <div class="wizard-step" id="wizStep4" style="display:none">
+          <div class="card" id="resumenCitaBox"></div>
+          <button class="btn btn-primary btn-block" onclick="confirmarCita()">Confirmar cita</button>
+          <button class="btn btn-ghost btn-block" onclick="irPaso(3)">Volver</button>
+        </div>
+      </div>
+
+      <!-- Mis citas -->
+      <div id="sub-citas" style="display:none">
+        <h1 class="page-title">Mis citas</h1>
+        <p class="page-sub">Historial y próximas consultas.</p>
+        <div id="citasList"></div>
+      </div>
+
+      <!-- Receta -->
+      <div id="sub-receta" style="display:none">
+        <h1 class="page-title">Detalle de receta</h1>
+        <p class="page-sub"><button class="link-btn" onclick="mostrarSub('citas')">← Volver a mis citas</button></p>
+        <div id="recetaBox"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <nav class="bottomnav" id="bottomnav" style="display:none">
+    <button data-target="home" class="active" onclick="mostrarSub('home')"><span class="ic">🏠</span>Inicio</button>
+    <button data-target="cita" onclick="irAAgendar()"><span class="ic">📅</span>Agendar</button>
+    <button data-target="citas" onclick="mostrarSub('citas')"><span class="ic">🗂️</span>Mis citas</button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

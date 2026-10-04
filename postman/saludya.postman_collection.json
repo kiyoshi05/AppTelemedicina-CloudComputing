@@ -1,0 +1,136 @@
+{
+  "info": {
+    "name": "SaludYa - Microservicios",
+    "description": "Pruebas de los 4 microservicios a través del gateway Nginx. Cambia la variable base_url por http://TU_ELASTIC_IP al probar en AWS.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost" },
+    { "key": "fecha", "value": "2026-12-15" }
+  ],
+  "item": [
+    {
+      "name": "Pacientes",
+      "item": [
+        {
+          "name": "Health",
+          "request": { "method": "GET", "url": "{{base_url}}/api/pacientes/health" }
+        },
+        {
+          "name": "Registrar paciente",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Juan Pérez\",\n  \"documento\": \"70000002\",\n  \"fecha_nacimiento\": \"1995-03-20\",\n  \"telefono\": \"912345678\",\n  \"sexo\": \"Masculino\",\n  \"email\": \"juan.perez@correo.com\",\n  \"password\": \"secreto123\"\n}"
+            },
+            "url": "{{base_url}}/api/pacientes/registro"
+          }
+        },
+        {
+          "name": "Login (paciente demo)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"maria.rojas@gmail.com\",\n  \"password\": \"demo1234\"\n}" },
+            "url": "{{base_url}}/api/pacientes/login"
+          }
+        },
+        {
+          "name": "Obtener paciente",
+          "request": { "method": "GET", "url": "{{base_url}}/api/pacientes/1" }
+        }
+      ]
+    },
+    {
+      "name": "Médicos",
+      "item": [
+        {
+          "name": "Especialidades",
+          "request": { "method": "GET", "url": "{{base_url}}/api/medicos/especialidades" }
+        },
+        {
+          "name": "Médicos por especialidad",
+          "request": { "method": "GET", "url": "{{base_url}}/api/medicos/?especialidad=cardio" }
+        },
+        {
+          "name": "Obtener médico",
+          "request": { "method": "GET", "url": "{{base_url}}/api/medicos/3" }
+        },
+        {
+          "name": "Horario del médico",
+          "request": { "method": "GET", "url": "{{base_url}}/api/medicos/3/horario" }
+        },
+        {
+          "name": "Sugerir especialidad por síntomas",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"texto\": \"Me duele el pecho y tengo palpitaciones\"\n}" },
+            "url": "{{base_url}}/api/medicos/sugerir"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Citas",
+      "item": [
+        {
+          "name": "Citas del paciente",
+          "request": { "method": "GET", "url": "{{base_url}}/api/citas/?paciente_id=1" }
+        },
+        {
+          "name": "Disponibilidad de un médico",
+          "request": { "method": "GET", "url": "{{base_url}}/api/citas/disponibilidad?medico_id=3&fecha={{fecha}}" }
+        },
+        {
+          "name": "Agendar cita",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"paciente_id\": 1,\n  \"medico_id\": 3,\n  \"fecha\": \"{{fecha}}\",\n  \"hora\": \"10:00\"\n}" },
+            "url": "{{base_url}}/api/citas/"
+          }
+        },
+        {
+          "name": "Cancelar cita",
+          "request": { "method": "PATCH", "url": "{{base_url}}/api/citas/2/cancelar" }
+        },
+        {
+          "name": "Completar cita",
+          "request": { "method": "PATCH", "url": "{{base_url}}/api/citas/2/completar" }
+        }
+      ]
+    },
+    {
+      "name": "Recetas",
+      "item": [
+        {
+          "name": "Catálogo de medicamentos",
+          "request": { "method": "GET", "url": "{{base_url}}/api/recetas/medicamentos" }
+        },
+        {
+          "name": "Recetas del paciente",
+          "request": { "method": "GET", "url": "{{base_url}}/api/recetas/?paciente_id=1" }
+        },
+        {
+          "name": "Receta de una cita",
+          "request": { "method": "GET", "url": "{{base_url}}/api/recetas/cita/1" }
+        },
+        {
+          "name": "Emitir receta",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cita_id\": 2,\n  \"paciente_id\": 1,\n  \"medico_nombre\": \"Dra. Ana Belén Ríos\",\n  \"especialidad_id\": \"derma\",\n  \"fecha\": \"{{fecha}}\",\n  \"indicaciones\": \"Aplicar crema 2 veces al día por 7 días.\",\n  \"items\": [\n    { \"medicamento\": \"Hidrocortisona 1%\", \"dosis\": \"Aplicar en la zona afectada cada 12h\" }\n  ]\n}"
+            },
+            "url": "{{base_url}}/api/recetas/"
+          }
+        }
+      ]
+    }
+  ]
+}
